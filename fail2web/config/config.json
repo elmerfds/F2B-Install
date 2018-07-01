@@ -1,0 +1,4 @@
+{
+    "Addr": "127.0.0.1:PORT",
+    "Fail2banSocket": "/var/run/fail2ban/fail2ban.sock"
+  }

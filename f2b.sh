@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v1.0.0-5
+version=v2.0.0-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -115,7 +115,39 @@ f2bstall_mod()
             fail2ban-client status $JAIL
             echo
         done
-}  
+}
+
+f2Rconfig_mod() 
+	{ 
+        echo
+        echo -e "\e[1;36m> Installing & Configuring Fail2Rest...\e[0m"
+		echo
+		echo "Downloading script to install Golang tools"
+		wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
+		echo
+		echo "Installing Golang tools"
+		bash goinstall.sh --64
+		apt-get update
+		apt-get install git gcc -y
+		source ~/.bashrc
+		echo "$GOPATH"
+		go version
+		echo "pausing to check if go is installed"
+		read
+
+		go get -v github.com/Sean-Der/fail2rest
+		go install -v github.com/Sean-Der/fail2rest
+		wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		mv /tmp/config.json /etc/fail2rest.json
+
+		ln -s $GOPATH/bin/fail2rest /usr/bin/
+		cp -a $GOPATH/src/github.com/Sean-Der/fail2rest/init-scripts/systemd /etc/systemd/system/fail2rest.service
+		systemctl enable fail2rest.service
+		systemctl start fail2rest.service
+
+        echo "- Done"        
+    }
+
 
 #script Updater
 gh_updater_mod()
@@ -165,6 +197,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
+		echo "| 5.| Fail2Rest Install"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
@@ -210,6 +243,14 @@ read_options(){
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
 		;;        
+
+		"5")
+        	echo "- Your choice 5: Fail2Rest Install"
+            f2Rconfig_mod
+    		echo
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read	
+		;;   
 
 		"u")
         	echo "- Update Script"
