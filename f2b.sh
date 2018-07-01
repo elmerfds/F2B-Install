@@ -127,7 +127,7 @@ f2Rconfig1_mod()
 		wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
 		echo
 		echo "Installing Golang tools"
-		sudo -u $SUDO_USER bash goinstall.sh --64
+		bash goinstall.sh --64
 		apt-get update
 		apt-get install git gcc -y
 		#shell_reload
@@ -146,8 +146,8 @@ f2Rconfig2_mod()
 		echo "pausing to check if go is installed"
 		read
 
-		sudo -u $SUDO_USER go get -v github.com/Sean-Der/fail2rest
-		sudo -u $SUDO_USER go install -v github.com/Sean-Der/fail2rest
+		go get -v github.com/Sean-Der/fail2rest
+		go install -v github.com/Sean-Der/fail2rest
 		wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
 		mv /tmp/config.json /etc/fail2rest.json
 
@@ -214,7 +214,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
-		echo "| 5.| Fail2Rest Install"		
+		echo "| 5.| Fail2Rest Install [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
