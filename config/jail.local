@@ -1,0 +1,201 @@
+ 
+
+# Comments: use '#' for comment lines and ';' (following a space) for inline comments
+
+
+[INCLUDES]
+
+#before = paths-distro.conf
+before = paths-debian.conf
+
+# The DEFAULT allows a global definition of the options. They can be overridden
+# in each jail afterwards.
+
+[DEFAULT]
+
+### MISCELLANEOUS OPTIONS
+
+ignoreip = 127.0.0.1/8 WANIP INTIP
+ignorecommand =
+
+# "bantime" is the number of seconds that a host is banned.
+bantime  = 900
+
+#Permanent ban
+#bantime= -1
+
+# A host is banned if it has generated "maxretry" during the last "findtime"
+# seconds.
+findtime  = 3600
+
+# "maxretry" is the number of failures before a host get banned.
+maxretry = 4
+backend = auto
+usedns = warn
+logencoding = auto
+enabled = false
+filter = %(__name__)s
+
+
+### ACTIONS
+
+destemail = root@localhost
+sender = root@localhost
+mta = sendmail
+protocol = tcp
+chain = INPUT
+port = 0:65535
+
+## Action shortcuts. To be used to define action parameter
+
+
+banaction = iptables-multiport
+
+# The simplest action to take: ban only
+action_ = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report to the destemail.
+action_mw = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+            %(mta)s-whois[name=%(__name__)s, dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report and relevant log lines
+# to the destemail.
+action_mwl = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             %(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
+
+# See the IMPORTANT note in action.d/xarf-login-attack for when to use this action
+#
+# ban & send a xarf e-mail to abuse contact of IP address and include relevant log lines
+# to the destemail.
+action_xarf = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             xarf-login-attack[service=%(__name__)s, sender="%(sender)s", logpath=%(logpath)s, port="%(port)s"]
+
+# ban IP on CloudFlare & send an e-mail with whois report and relevant log lines
+# to the destemail.
+action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
+                %(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
+
+# Report block via blocklist.de fail2ban reporting service API
+# 
+# See the IMPORTANT note in action.d/blocklist_de.conf for when to
+# use this action. Create a file jail.d/blocklist_de.local containing
+# [Init]
+# blocklist_de_apikey = {api key from registration]
+#
+action_blocklist_de  = blocklist_de[email="%(sender)s", service=%(filter)s, apikey="%(blocklist_de_apikey)s"]
+
+# Report ban via badips.com, and use as blacklist
+#
+# See BadIPsAction docstring in config/action.d/badips.py for
+# documentation for this action.
+#
+# NOTE: This action relies on banaction being present on start and therefore
+# should be last action defined for a jail.
+#
+action_badips = badips.py[category="%(name)s", banaction="%(banaction)s"]
+
+# Choose default action.  To change, just override value of 'action' with the
+# interpolation to the chosen action shortcut (e.g.  action_mw, action_mwl, etc) in jail.local
+# globally (section [DEFAULT]) or per specific section
+action = %(action_)s
+
+
+### JAILS
+
+
+## SSH servers
+
+[sshd]
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = /var/log/auth.log
+maxretry = 3
+
+[sshd-cf]
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = /var/log/auth.log
+action   = cloudflare-v4	   
+maxretry = 3
+
+## HTTP servers
+#Enable or Disable the jails you want using true/false
+
+[nginx-http-auth]
+enabled  = false
+filter   = nginx-http-auth      
+port     = http,https
+logpath  = /var/log/nginx/error.log
+maxretry = 3
+
+[nginx-http-auth-cf]
+enabled  = false
+filter   = nginx-http-auth
+action   = cloudflare       
+port     = http,https
+logpath  = /var/log/nginx/error.log
+maxretry = 3
+
+#Leave nginx-noscript disabled
+[nginx-noscript]
+enabled  = false
+port     = http,https
+filter   = nginx-noscript
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-noscript-cf]
+enabled  = false
+port     = http,https
+filter   = nginx-noscript
+action   = cloudflare-v4	   
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-badbots]
+enabled  = false
+port     = http,https
+filter   = nginx-badbots       
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-badbots-cf]
+enabled  = false
+port     = http,https
+filter   = nginx-badbots
+action   = cloudflare-v4    
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-nohome]
+enabled  = false
+port     = http,https
+filter   = nginx-nohome
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-nohome-cf]
+enabled  = false
+port     = http,https
+filter   = nginx-nohome
+action   = cloudflare-v4
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-noproxy]
+enabled  = false
+port     = http,https
+filter   = nginx-noproxy      
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
+[nginx-noproxy-cf]
+enabled  = false
+port     = http,https
+filter   = nginx-noproxy
+action   = cloudflare-v4      
+logpath  = /var/log/nginx/access.log
+maxretry = 3
+
