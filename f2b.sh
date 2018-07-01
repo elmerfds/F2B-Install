@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v0.1.1-0
+version=v1.0.0-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -152,7 +152,8 @@ show_menus()
 		echo "| 1.| F2B Install  " 
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
-		echo "| 4.| Show All Jail Status"                
+		echo "| 4.| Show All Jail Status"
+		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
 		echo
