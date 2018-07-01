@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v0.1.0-0
+version=v0.1.1-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -51,8 +51,7 @@ f2bconfig_mod()
         chmod 644 $F2B_ACTION_LOC
         cp $CURRENT_DIR/config/filter.d/* $F2B_FILTER_LOC   
         chmod 644 $F2B_FILTER_LOC/*
-		echo
-        echo -e "\e[1;36m> - Done\e[0m"        
+        echo "- Done"        
     }
 
  f2bconfig_cf_mod() 
@@ -61,7 +60,7 @@ f2bconfig_mod()
         echo -e "\e[1;36m> Adding Organizr v2 Jail...\e[0m"
 		echo
         echo
-        echo "Please enter the full path to your Organizr login log path?"
+		echo -e "\e[1;36m> Please enter the full path to your Organizr login log path?\e[0m" 
         echo "- e.g /var/www/organizr_folder_name/db/organizrLoginLog.json"
         read -r ORGLOGPATH
         echo
