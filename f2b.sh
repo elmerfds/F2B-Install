@@ -113,6 +113,35 @@ f2bstall_mod()
         done
 }  
 
+#script Updater
+gh_updater_mod()
+	{
+		echo
+		echo "Which branch do you want to pull?"
+		echo "- [1] = Master [2] = Dev [3] = Exp"
+		read -r gh_branch_no
+		echo
+
+		if [ $gh_branch_no = "1" ]
+		then 
+		gh_branch_name=master
+				
+		elif [ $gh_branch_no = "2" ]
+		then 
+		gh_branch_name=dev
+	
+		elif [ $gh_branch_no = "3" ]
+		then 
+		gh_branch_name=exp
+		fi
+
+		git fetch --all
+		git reset --hard origin/$gh_branch_name
+		git pull origin $gh_branch_name
+		echo
+        echo -e "\e[1;36mScript updated, reloading now...\e[0m"
+        shell_reload
+	}
 
 
 show_menus() 
@@ -168,6 +197,14 @@ read_options(){
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
 		;;        
+
+		"u")
+        	echo "- Update Script"
+            gh_updater_mod
+    		echo
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read	
+		;;   
 
 		"x")
 			exit 0
