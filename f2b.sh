@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.0.1-0
+version=v2.0.1-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -257,7 +257,7 @@ read_options(){
 
 		"5")
         	echo "- Your choice 5: Fail2Rest Install"
-            f2Rconfig_mod
+            f2Rconfig1
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
