@@ -196,8 +196,7 @@ gh_updater_mod()
 show_menus() 
 	{
         if [ -e "./inst_5_temp" ]; then
-            docker_env_set
-            additional_docker_config
+			f2Rconfig2_mod
             sleep 3s
             clear
 		fi
@@ -259,7 +258,6 @@ read_options(){
 		"5")
         	echo "- Your choice 5: Fail2Rest Install"
             f2Rconfig_mod
-			f2Rconfig2_mod
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
