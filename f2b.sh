@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v1.0.0-1
+version=v1.0.0-5
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -92,6 +92,10 @@ filter   = organizr-auth-v2
 action   = cloudflare-v4    
 logpath  = $ORGLOGPATH
 maxretry = 3" >> $F2B_LOC/jail.local
+
+		echo -e "\e[1;36m> Config Done.\e[0m" 
+		echo
+		echo -e "\e[1;36m> Reloading and Restarting F2B.\e[0m" 
 
         fail2ban-client reload
         systemctl restart fail2ban
