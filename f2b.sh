@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.0.1-1
+version=v2.0.2-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -130,7 +130,10 @@ f2Rconfig1_mod()
 		bash goinstall.sh --64
 		apt-get update
 		apt-get install git gcc -y
-		shell_reload
+		#shell_reload
+		echo "Press enter to exit script and reload login"
+		echo "Then please run the script again to complete setup"
+		sudo -u $SUDO_USER bash --login
 	}
 
 f2Rconfig2_mod() 
@@ -150,6 +153,7 @@ f2Rconfig2_mod()
 		systemctl enable fail2rest.service
 		systemctl start fail2rest.service
 
+		rm -rf ./inst_5_temp
         echo "- Done"        
     }
 
@@ -257,7 +261,7 @@ read_options(){
 
 		"5")
         	echo "- Your choice 5: Fail2Rest Install"
-            f2Rconfig1
+            f2Rconfig1_mod
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
