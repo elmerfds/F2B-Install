@@ -111,8 +111,6 @@ f2bstall_mod()
             echo
             fail2ban-client status $JAIL
             echo
-            echo "--------------- ### ---------------"
-            echo
         done
 }  
 
