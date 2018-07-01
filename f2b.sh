@@ -121,7 +121,7 @@ f2Rconfig1_mod()
 	{ 
         echo
         echo -e "\e[1;36m> Installing & Configuring Fail2Rest...\e[0m"
-		touch ./inst_5_temp
+		sudo touch ./inst_5_temp
 		echo
 		echo "Downloading script to install Golang tools"
 		wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
@@ -129,14 +129,14 @@ f2Rconfig1_mod()
 		echo "Installing Golang tools"
 		bash goinstall.sh --64
 		apt-get update
-		apt-get install git gcc -y
+		sudo apt-get install git gcc -y
 		#shell_reload
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload login\e[0m"
 		echo -e "\e[1;36m> Then please run the script again to complete setup\e[0m"
 		read
-		#sudo -u $SUDO_USER bash --login
-		shell_reload
+		sudo -u $SUDO_USER bash --login
+		#shell_reload
 	}
 
 f2Rconfig2_mod() 
