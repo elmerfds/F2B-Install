@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.0.0-0
+version=v2.0.1-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -117,10 +117,11 @@ f2bstall_mod()
         done
 }
 
-f2Rconfig_mod() 
+f2Rconfig1_mod() 
 	{ 
         echo
         echo -e "\e[1;36m> Installing & Configuring Fail2Rest...\e[0m"
+		touch ./inst_5_temp
 		echo
 		echo "Downloading script to install Golang tools"
 		wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
@@ -129,7 +130,11 @@ f2Rconfig_mod()
 		bash goinstall.sh --64
 		apt-get update
 		apt-get install git gcc -y
-		source ~/.bashrc
+		shell_reload
+	}
+
+f2Rconfig2_mod() 
+	{ 	source ~/.bashrc
 		echo "$GOPATH"
 		go version
 		echo "pausing to check if go is installed"
@@ -190,6 +195,13 @@ gh_updater_mod()
 
 show_menus() 
 	{
+        if [ -e "./inst_5_temp" ]; then
+            docker_env_set
+            additional_docker_config
+            sleep 3s
+            clear
+		fi
+
 		echo
 		echo -e " 	  \e[1;36m|F2B - INSTALLER $version|  \e[0m"
 		echo
@@ -247,6 +259,7 @@ read_options(){
 		"5")
         	echo "- Your choice 5: Fail2Rest Install"
             f2Rconfig_mod
+			f2Rconfig2_mod
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
