@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v1.0.0-0
+version=v1.0.0-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -142,6 +142,14 @@ gh_updater_mod()
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
         shell_reload
 	}
+
+ shell_reload()
+	{
+        sleep 1s
+		chmod +x $BASH_SOURCE
+		exec ./f2b.sh
+    } 
+
 
 
 show_menus() 
