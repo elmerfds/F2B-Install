@@ -19,6 +19,12 @@ F2B_FILTER_LOC='/etc/fail2ban/filter.d'
 WAN_IP=$(curl ipinfo.io/ip)
 INT_IP=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
 
+#temp variables
+export GOROOT=$HOME/.go'
+export PATH=$PATH:$GOROOT/bin'
+export GOPATH=$HOME/go'
+export PATH=$PATH:$GOPATH/bin'
+
 #Modules
 #Organizr Requirement Module
 f2binstall_mod() 
