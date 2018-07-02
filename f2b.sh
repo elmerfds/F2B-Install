@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.3-2
+version=v2.2.3-3
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -286,7 +286,6 @@ show_menus()
 	{
         if [ -e "./inst_5_temp" ]; then
 			f2Rconfig2_mod
-            sleep 3s
             clear
 		fi
 
