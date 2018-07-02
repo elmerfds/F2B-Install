@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v1.0.0-5
+version=v2.2.1-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -115,7 +115,95 @@ f2bstall_mod()
             fail2ban-client status $JAIL
             echo
         done
-}  
+}
+
+f2Rconfig1_mod() 
+	{ 
+		if [ `whoami` = root ]; then
+    		echo To use this option, please do not run script as root or using sudo
+    		exit
+		fi
+        echo
+        echo -e "\e[1;36m> Installing & Configuring Fail2Rest...\e[0m"
+		sudo touch ./inst_5_temp
+		echo
+		echo "Downloading script to install Golang tools"
+		sudo wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
+		echo
+		echo "Installing Golang tools"
+		bash goinstall.sh --64
+		sudo apt-get update
+		sudo apt-get install git gcc -y
+		#shell_reload
+		echo
+		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
+		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
+		echo "  OR  "
+		echo -e "\e[1;36m> Use this command: source ~/.bashrc \e[0m"
+		echo
+		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
+		read
+		#source ~/.bashrc
+		exit
+	}
+
+f2Rconfig2_mod() 
+	{ 	
+		if [ `whoami` = root ]; then
+  			echo To use this option, please do not run script as root or using sudo
+    		exit
+		fi
+		
+		##debug
+		#echo "$GOPATH"
+		#go version
+		#echo "pausing to check if go is installed"
+		#read
+		#echo
+		##debug end
+
+		go get -v github.com/Sean-Der/fail2rest
+		go install -v github.com/Sean-Der/fail2rest
+		sudo cp $CURRENT_DIR/fail2rest/config/config.json /tmp
+		#sudo wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		echo
+		echo -e "\e[1;36m> Which port number do you want to run the Fail2rest service on? Enter to use Default (5050)\e[0m"
+		read -r PORT
+		PORT=${PORT:-5050}
+		sudo $SED -i "s/PORT/$PORT/g" /tmp/config.json
+		sudo mv /tmp/config.json /etc/fail2rest.json
+
+		sudo ln -s $GOPATH/bin/fail2rest /usr/bin/
+		sudo cp -a $GOPATH/src/github.com/Sean-Der/fail2rest/init-scripts/systemd /etc/systemd/system/fail2rest.service
+		sudo systemctl enable fail2rest.service
+		sudo systemctl start fail2rest.service
+		sudo rm -rf ./inst_5_temp
+		echo
+        echo "- Done"
+		echo
+		echo "Downloading Fail2web & Configuring permissions"        
+		sudo git clone --depth=1 https://github.com/Sean-Der/fail2web.git /var/www/fail2web
+		echo
+		sudo chown -R www-data:$SUDO_USER /var/www/fail2web
+		sudo chmod -R 775 /var/www/fail2web
+        echo "- Done"
+		echo
+		echo 
+		echo "Create a new nginx server block and add in the following config for your Fail2Web/Fail2Rest setup"
+		echo "
+    			location / {
+        			root /var/www/fail2web/web;	#Fail2Web folder location
+    			}
+    			location /api/ {
+        			proxy_pass         http://127.0.0.1:$PORT/; #Fail2Rest URL
+        			proxy_redirect     off;
+    			}
+   			"
+		echo "Make sure you've got some authentication setup to prevent unauthorized access"
+		read	   
+
+    }
+
 
 #script Updater
 gh_updater_mod()
@@ -158,6 +246,12 @@ gh_updater_mod()
 
 show_menus() 
 	{
+        if [ -e "./inst_5_temp" ]; then
+			f2Rconfig2_mod
+            sleep 3s
+            clear
+		fi
+
 		echo
 		echo -e " 	  \e[1;36m|F2B - INSTALLER $version|  \e[0m"
 		echo
@@ -165,6 +259,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
+		echo "| 5.| Fail2Rest Install [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
@@ -210,6 +305,14 @@ read_options(){
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read	
 		;;        
+
+		"5")
+        	echo "- Your choice 5: Fail2Rest Install"
+            f2Rconfig1_mod
+    		echo
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read	
+		;;   
 
 		"u")
         	echo "- Update Script"
