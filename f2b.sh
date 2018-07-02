@@ -178,6 +178,7 @@ f2Rconfig1_mod()
 		sudo rm -rf ./goinstall.sh
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
+		echo -e "\e[1;36m> Don't forget to re-launch the script without sudo or as root to complete the install: bash f2b.sh\e[0m"
 		read
 		sudo -u $SCRIPT_USER bash --login
 	}
