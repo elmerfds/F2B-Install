@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.3-1
+version=v2.2.3-2
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -18,6 +18,7 @@ F2B_ACTION_LOC='/etc/fail2ban/action.d'
 F2B_FILTER_LOC='/etc/fail2ban/filter.d'
 WAN_IP=$(curl ipinfo.io/ip)
 INT_IP=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
+SCRIPT_USER=$(whoami)
 
 #Modules
 #Organizr Requirement Module
@@ -148,6 +149,7 @@ f2bstall_mod()
         JAILS=($(fail2ban-client status | grep "Jail list" | sed -E 's/^[^:]+:[ \t]+//' | sed 's/,//g'))
         for JAIL in ${JAILS[@]}
         do
+			echo
             echo "--------------- JAIL STATUS: $JAIL ---------------"
             echo
             fail2ban-client status $JAIL
@@ -176,14 +178,8 @@ f2Rconfig1_mod()
 		sudo rm -rf ./goinstall.sh
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
-		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
-		echo "  OR  "
-		echo -e "\e[1;36m> Use this command: source ~/.bashrc \e[0m"
-		echo
-		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
 		read
-		#source ~/.bashrc
-		exit
+		sudo -u $SCRIPT_USER bash --login
 	}
 
 f2Rconfig2_mod() 
