@@ -171,7 +171,7 @@ f2Rconfig2_mod()
 		echo -e "\e[1;36m> Which port number do you want to run the Fail2rest service on? Enter to use Default (5050)\e[0m"
 		read -r PORT
 		PORT=${PORT:-5050}
-		$SED -i "s/PORT/$PORT/g" /tmp/fail2rest.json
+		sudo $SED -i "s/PORT/$PORT/g" /tmp/fail2rest.json
 		sudo mv /tmp/config.json /etc/fail2rest.json
 
 		sudo ln -s $GOPATH/bin/fail2rest /usr/bin/
