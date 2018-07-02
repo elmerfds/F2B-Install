@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.0-3
+version=v2.2.1-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -137,8 +137,8 @@ f2Rconfig1_mod()
 		#shell_reload
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
-		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works or use this command: source ~/.bashrc \e[0m"
-		echo "OR"
+		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
+		echo "  OR  "
 		echo -e "\e[1;36m> Use this command: source ~/.bashrc \e[0m"
 		echo
 		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
@@ -179,7 +179,26 @@ f2Rconfig2_mod()
 		sudo systemctl start fail2rest.service
 		sudo rm -rf ./inst_5_temp
 		echo
-        echo "- Done"        
+        echo "- Done"
+		echo
+		echo "Downloading Fail2Web"        
+		sudo git clone --depth=1 https://github.com/Sean-Der/fail2web.git /var/www/fail2web
+		echo
+        echo "- Done"
+		echo 
+		echo "Create a new nginx server block and in the following config for your Fail2Web/Fail2Rest setup"
+		echo "
+    			location / {
+        			root /var/www/fail2web;
+    			}
+    			location /api/ {
+        			proxy_pass         http://127.0.0.1:$PORT/;
+        			proxy_redirect     off;
+    			}
+   			"
+		echo "Make sure you've got some authentication setup to prevent unauthorized access"
+		read	   
+
     }
 
 
