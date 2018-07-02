@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.1.0-0
+version=v2.1.1-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -119,6 +119,10 @@ f2bstall_mod()
 
 f2Rconfig1_mod() 
 	{ 
+		if [ `whoami` = root ]; then
+    		echo To use this option, please do not run script as root or using sudo
+    		exit
+		fi
         echo
         echo -e "\e[1;36m> Installing & Configuring Fail2Rest...\e[0m"
 		sudo touch ./inst_5_temp
@@ -135,12 +139,18 @@ f2Rconfig1_mod()
 		echo -e "\e[1;36m> Press enter to exit script and reload login\e[0m"
 		echo -e "\e[1;36m> Then please run the script again to complete setup\e[0m"
 		read
-		source ~/.bashrc  
+		source $HOME/.${shell_profile}
+		source ~/.bashrc
 		#shell_reload
 	}
 
 f2Rconfig2_mod() 
-	{ 	source ~/.bashrc
+	{ 	
+		if [ `whoami` = root ]; then
+  			echo To use this option, please do not run script as root or using sudo
+    		exit
+		fi
+		#source ~/.bashrc
 		echo "$GOPATH"
 		go version
 		echo "pausing to check if go is installed"
