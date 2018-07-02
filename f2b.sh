@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.0.3-0
+version=v2.1.0-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -124,7 +124,7 @@ f2Rconfig1_mod()
 		sudo touch ./inst_5_temp
 		echo
 		echo "Downloading script to install Golang tools"
-		wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
+		sudo wget https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh
 		echo
 		echo "Installing Golang tools"
 		bash goinstall.sh --64
@@ -135,7 +135,7 @@ f2Rconfig1_mod()
 		echo -e "\e[1;36m> Press enter to exit script and reload login\e[0m"
 		echo -e "\e[1;36m> Then please run the script again to complete setup\e[0m"
 		read
-		sudo -u $SUDO_USER bash --login
+		source ~/.bashrc  
 		#shell_reload
 	}
 
@@ -148,14 +148,14 @@ f2Rconfig2_mod()
 
 		go get -v github.com/Sean-Der/fail2rest
 		go install -v github.com/Sean-Der/fail2rest
-		wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
-		mv /tmp/config.json /etc/fail2rest.json
+		sudo wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		sudo mv /tmp/config.json /etc/fail2rest.json
 
-		ln -s $GOPATH/bin/fail2rest /usr/bin/
-		cp -a $GOPATH/src/github.com/Sean-Der/fail2rest/init-scripts/systemd /etc/systemd/system/fail2rest.service
-		systemctl enable fail2rest.service
-		systemctl start fail2rest.service
-		rm -rf ./inst_5_temp
+		sudo ln -s $GOPATH/bin/fail2rest /usr/bin/
+		sudo cp -a $GOPATH/src/github.com/Sean-Der/fail2rest/init-scripts/systemd /etc/systemd/system/fail2rest.service
+		sudo systemctl enable fail2rest.service
+		sudo systemctl start fail2rest.service
+		sudo rm -rf ./inst_5_temp
         echo "- Done"        
     }
 
