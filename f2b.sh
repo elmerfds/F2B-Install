@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.1-0
+version=v2.2.1-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -132,7 +132,7 @@ f2Rconfig1_mod()
 		echo
 		echo "Installing Golang tools"
 		bash goinstall.sh --64
-		apt-get update
+		sudo apt-get update
 		sudo apt-get install git gcc -y
 		#shell_reload
 		echo
@@ -181,18 +181,21 @@ f2Rconfig2_mod()
 		echo
         echo "- Done"
 		echo
-		echo "Downloading Fail2Web"        
+		echo "Downloading Fail2web & Configuring permissions"        
 		sudo git clone --depth=1 https://github.com/Sean-Der/fail2web.git /var/www/fail2web
 		echo
+		sudo chown -R www-data:$SUDO_USER /var/www/fail2web
+		sudo chmod -R 775 /var/www/fail2web
         echo "- Done"
+		echo
 		echo 
-		echo "Create a new nginx server block and in the following config for your Fail2Web/Fail2Rest setup"
+		echo "Create a new nginx server block and add in the following config for your Fail2Web/Fail2Rest setup"
 		echo "
     			location / {
-        			root /var/www/fail2web;
+        			root /var/www/fail2web/web;	#Fail2Web folder location
     			}
     			location /api/ {
-        			proxy_pass         http://127.0.0.1:$PORT/;
+        			proxy_pass         http://127.0.0.1:$PORT/; #Fail2Rest URL
         			proxy_redirect     off;
     			}
    			"
