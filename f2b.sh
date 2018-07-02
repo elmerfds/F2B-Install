@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.3-0
+version=v2.2.3-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -57,7 +57,7 @@ f2bconfig_mod()
 
 		echo "Enter find time value in seconds i.e. A host is banned if it has generated "maxretry" during the last "findtime", default = 3600"
 		read -r FIND_TIME
-		FIND_TIME=${FIND_TIME:-4}
+		FIND_TIME=${FIND_TIME:-3600}
 
 		$SED -i "s/BAN_TIME/$BAN_TIME/g" $F2B_LOC/jail.local
         $SED -i "s/MAX_RETRY/$MAX_RETRY/g" $F2B_LOC/jail.local
