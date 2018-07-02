@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.0-2
+version=v2.2.0-3
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -138,6 +138,8 @@ f2Rconfig1_mod()
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
 		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works or use this command: source ~/.bashrc \e[0m"
+		echo "OR"
+		echo -e "\e[1;36m> Use this command: source ~/.bashrc \e[0m"
 		echo
 		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
 		read
@@ -151,21 +153,24 @@ f2Rconfig2_mod()
   			echo To use this option, please do not run script as root or using sudo
     		exit
 		fi
-		#source ~/.bashrc
-		echo "$GOPATH"
-		go version
-		echo "pausing to check if go is installed"
-		read
-		echo
+		
+		##debug
+		#echo "$GOPATH"
+		#go version
+		#echo "pausing to check if go is installed"
+		#read
+		#echo
+		##debug end
 
 		go get -v github.com/Sean-Der/fail2rest
 		go install -v github.com/Sean-Der/fail2rest
 		sudo cp $CURRENT_DIR/fail2rest/config/config.json /tmp
 		#sudo wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		echo
 		echo -e "\e[1;36m> Which port number do you want to run the Fail2rest service on? Enter to use Default (5050)\e[0m"
 		read -r PORT
 		PORT=${PORT:-5050}
-		sudo $SED -i "s/PORT/$PORT/g" /tmp/fail2rest.json
+		sudo $SED -i "s/PORT/$PORT/g" /tmp/config.json
 		sudo mv /tmp/config.json /etc/fail2rest.json
 
 		sudo ln -s $GOPATH/bin/fail2rest /usr/bin/
@@ -173,6 +178,7 @@ f2Rconfig2_mod()
 		sudo systemctl enable fail2rest.service
 		sudo systemctl start fail2rest.service
 		sudo rm -rf ./inst_5_temp
+		echo
         echo "- Done"        
     }
 
