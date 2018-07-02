@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.1-1
+version=v2.2.2-2
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -64,18 +64,24 @@ f2bconfig_mod()
         echo "- e.g /var/www/organizr_folder_name/db/organizrLoginLog.json"
         read -r ORGLOGPATH
         echo
-		echo -e "\e[1;36m> Enter your Cloudflare email.\e[0m"
-        read -r cfuser_f2bi
-        echo
-		echo -e "\e[1;36m> Enter your Cloudflare API.\e[0m" 
-		echo "- You can get your Cloudflare API from here: https://dash.cloudflare.com/profile"        
-        read -r cftoken_f2bi
-        echo
-        $SED -i "s/cfuser_f2bi/$cfuser_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf
-        $SED -i "s/cftoken_f2bi/$cftoken_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf     
-		echo
+		echo "If you're using CloudFlare, you can use the API to utilise their firewall to block IPs, Do you want to set this up? [y/n]"
+		read -r cf_action_setup
+		cf_action_setup=${cf_action_setup:-n}
+		if [ $cf_action_setup = "y" ]
+		then 
+				
+			echo -e "\e[1;36m> Enter your Cloudflare email.\e[0m"
+        	read -r cfuser_f2bi
+        	echo
+			echo -e "\e[1;36m> Enter your Cloudflare API.\e[0m" 
+			echo "- You can get your Cloudflare API from here: https://dash.cloudflare.com/profile"        
+        	read -r cftoken_f2bi
+        	echo
+        	$SED -i "s/cfuser_f2bi/$cfuser_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf
+        	$SED -i "s/cftoken_f2bi/$cftoken_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf     
+			echo
 
-echo "
+			echo "
 ## Organizr Jails
 
 [organizr-auth]
@@ -92,6 +98,19 @@ filter   = organizr-auth-v2
 action   = cloudflare-v4    
 logpath  = $ORGLOGPATH
 maxretry = 3" >> $F2B_LOC/jail.local
+			
+		elif [ $cf_action_setup = "n" ]
+		then 
+		echo "
+## Organizr Jails
+
+[organizr-auth]
+enabled  = true
+port     = http,https
+filter   = organizr-auth-v2
+maxretry = 3" >> $F2B_LOC/jail.local
+		fi
+
 
 		echo -e "\e[1;36m> Config Done.\e[0m" 
 		echo
@@ -135,6 +154,7 @@ f2Rconfig1_mod()
 		sudo apt-get update
 		sudo apt-get install git gcc -y
 		#shell_reload
+		sudo rm -rf ./goinstall.sh
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
 		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
@@ -195,11 +215,13 @@ f2Rconfig2_mod()
         			root /var/www/fail2web/web;	#Fail2Web folder location
     			}
     			location /api/ {
-        			proxy_pass         http://127.0.0.1:$PORT/; #Fail2Rest URL
-        			proxy_redirect     off;
+        			proxy_pass		http://127.0.0.1:$PORT/; #Fail2Rest URL
+        			proxy_redirect	off;
     			}
    			"
 		echo "Make sure you've got some authentication setup to prevent unauthorized access"
+		echo
+		echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 		read	   
 
     }
@@ -259,7 +281,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
-		echo "| 5.| Fail2Rest Install [Do not run script as sudo for this option]"		
+		echo "| 5.| Fail2Web Install [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
@@ -307,7 +329,7 @@ read_options(){
 		;;        
 
 		"5")
-        	echo "- Your choice 5: Fail2Rest Install"
+        	echo "- Your choice 5: Fail2Web/Fail2Rest Install"
             f2Rconfig1_mod
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
