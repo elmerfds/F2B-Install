@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.2-0
+version=v2.2.2-1
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -108,13 +108,6 @@ maxretry = 3" >> $F2B_LOC/jail.local
 enabled  = true
 port     = http,https
 filter   = organizr-auth-v2
-maxretry = 3
-
-[organizr-auth-cf]
-enabled  = true
-port     = http,https
-filter   = organizr-auth-v2
-logpath  = $ORGLOGPATH
 maxretry = 3" >> $F2B_LOC/jail.local
 		fi
 
@@ -285,7 +278,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
-		echo "| 5.| Fail2Rest Install [Do not run script as sudo for this option]"		
+		echo "| 5.| Fail2Web Install [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
