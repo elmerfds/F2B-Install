@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.1-1
+version=v2.2.2-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -64,18 +64,24 @@ f2bconfig_mod()
         echo "- e.g /var/www/organizr_folder_name/db/organizrLoginLog.json"
         read -r ORGLOGPATH
         echo
-		echo -e "\e[1;36m> Enter your Cloudflare email.\e[0m"
-        read -r cfuser_f2bi
-        echo
-		echo -e "\e[1;36m> Enter your Cloudflare API.\e[0m" 
-		echo "- You can get your Cloudflare API from here: https://dash.cloudflare.com/profile"        
-        read -r cftoken_f2bi
-        echo
-        $SED -i "s/cfuser_f2bi/$cfuser_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf
-        $SED -i "s/cftoken_f2bi/$cftoken_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf     
-		echo
+		echo "If you're using CloudFlare, you can use the API to utilise their firewall to block IPs, Do you want to set this up? [y/n]"
+		read -r cf_action_setup
+		cf_action_setup=${cf_action_setup:-n}
+		if [ $cf_action_setup = "y" ]
+		then 
+				
+			echo -e "\e[1;36m> Enter your Cloudflare email.\e[0m"
+        	read -r cfuser_f2bi
+        	echo
+			echo -e "\e[1;36m> Enter your Cloudflare API.\e[0m" 
+			echo "- You can get your Cloudflare API from here: https://dash.cloudflare.com/profile"        
+        	read -r cftoken_f2bi
+        	echo
+        	$SED -i "s/cfuser_f2bi/$cfuser_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf
+        	$SED -i "s/cftoken_f2bi/$cftoken_f2bi/g" $F2B_ACTION_LOC/cloudflare-v4.conf     
+			echo
 
-echo "
+			echo "
 ## Organizr Jails
 
 [organizr-auth]
@@ -92,6 +98,26 @@ filter   = organizr-auth-v2
 action   = cloudflare-v4    
 logpath  = $ORGLOGPATH
 maxretry = 3" >> $F2B_LOC/jail.local
+			
+		elif [ $cf_action_setup = "n" ]
+		then 
+		echo "
+## Organizr Jails
+
+[organizr-auth]
+enabled  = true
+port     = http,https
+filter   = organizr-auth-v2
+maxretry = 3
+
+[organizr-auth-cf]
+enabled  = true
+port     = http,https
+filter   = organizr-auth-v2
+logpath  = $ORGLOGPATH
+maxretry = 3" >> $F2B_LOC/jail.local
+		fi
+
 
 		echo -e "\e[1;36m> Config Done.\e[0m" 
 		echo
