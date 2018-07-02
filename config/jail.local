@@ -19,17 +19,17 @@ ignoreip = 127.0.0.1/8 WANIP INTIP
 ignorecommand =
 
 # "bantime" is the number of seconds that a host is banned.
-bantime  = 900
+bantime  = BAN_TIME
 
 #Permanent ban
 #bantime= -1
 
 # A host is banned if it has generated "maxretry" during the last "findtime"
 # seconds.
-findtime  = 3600
+findtime  = FIND_TIME
 
 # "maxretry" is the number of failures before a host get banned.
-maxretry = 4
+maxretry = MAX_RETRY
 backend = auto
 usedns = warn
 logencoding = auto

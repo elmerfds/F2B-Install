@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.2-2
+version=v2.2.3-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -46,6 +46,25 @@ f2bconfig_mod()
         cp $CURRENT_DIR/config/jail.local $F2B_LOC
         $SED -i "s/WANIP/$WAN_IP/g" $F2B_LOC/jail.local
         $SED -i "s/INTIP/$INT_IP/g" $F2B_LOC/jail.local
+		echo
+		echo "Enter number of seconds a host will be banned, default = 600"
+		read -r BAN_TIME
+		BAN_TIME=${BAN_TIME:-600}
+
+		echo "Enter a max retry value before a host is banned, default = 4"
+		read -r MAX_RETRY
+		MAX_RETRY=${MAX_RETRY:-4}
+
+		echo "Enter find time value in seconds i.e. A host is banned if it has generated "maxretry" during the last "findtime", default = 3600"
+		read -r FIND_TIME
+		FIND_TIME=${FIND_TIME:-4}
+
+		$SED -i "s/BAN_TIME/$BAN_TIME/g" $F2B_LOC/jail.local
+        $SED -i "s/MAX_RETRY/$MAX_RETRY/g" $F2B_LOC/jail.local
+		$SED -i "s/FIND_TIME/$FIND_TIME/g" $F2B_LOC/jail.local
+
+		echo
+
         chmod 644 $F2B_LOC/jail.local
         cp $CURRENT_DIR/config/action.d/cloudflare-v4.conf $F2B_ACTION_LOC
         chmod 644 $F2B_ACTION_LOC
@@ -281,7 +300,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
-		echo "| 5.| Fail2Web Install [Do not run script as sudo for this option]"		
+		echo "| 5.| Fail2Web Install (F2B frontend) [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
