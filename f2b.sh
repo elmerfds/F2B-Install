@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.2-1
+version=v2.2.2-2
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -154,6 +154,7 @@ f2Rconfig1_mod()
 		sudo apt-get update
 		sudo apt-get install git gcc -y
 		#shell_reload
+		sudo rm -rf ./goinstall.sh
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
 		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
@@ -214,11 +215,13 @@ f2Rconfig2_mod()
         			root /var/www/fail2web/web;	#Fail2Web folder location
     			}
     			location /api/ {
-        			proxy_pass         http://127.0.0.1:$PORT/; #Fail2Rest URL
-        			proxy_redirect     off;
+        			proxy_pass		http://127.0.0.1:$PORT/; #Fail2Rest URL
+        			proxy_redirect	off;
     			}
    			"
 		echo "Make sure you've got some authentication setup to prevent unauthorized access"
+		echo
+		echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 		read	   
 
     }
@@ -326,7 +329,7 @@ read_options(){
 		;;        
 
 		"5")
-        	echo "- Your choice 5: Fail2Rest Install"
+        	echo "- Your choice 5: Fail2Web/Fail2Rest Install"
             f2Rconfig1_mod
     		echo
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
