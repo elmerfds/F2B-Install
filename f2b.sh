@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.0-0
+version=v2.2.0-2
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -18,12 +18,6 @@ F2B_ACTION_LOC='/etc/fail2ban/action.d'
 F2B_FILTER_LOC='/etc/fail2ban/filter.d'
 WAN_IP=$(curl ipinfo.io/ip)
 INT_IP=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
-
-#temp variables
-export GOROOT=$HOME/.go'
-export PATH=$PATH:$GOROOT/bin'
-export GOPATH=$HOME/go'
-export PATH=$PATH:$GOPATH/bin'
 
 #Modules
 #Organizr Requirement Module
@@ -147,8 +141,8 @@ f2Rconfig1_mod()
 		echo
 		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
 		read
-		source ~/.bashrc
-		#shell_reload
+		#source ~/.bashrc
+		exit
 	}
 
 f2Rconfig2_mod() 
