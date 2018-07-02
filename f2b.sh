@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.1.1-0
+version=v2.2.0-0
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -142,10 +142,11 @@ f2Rconfig1_mod()
 		sudo apt-get install git gcc -y
 		#shell_reload
 		echo
-		echo -e "\e[1;36m> Press enter to exit script and reload login\e[0m"
-		echo -e "\e[1;36m> Then please run the script again to complete setup\e[0m"
+		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
+		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works or use this command: source ~/.bashrc \e[0m"
+		echo
+		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
 		read
-		source $HOME/.${shell_profile}
 		source ~/.bashrc
 		#shell_reload
 	}
@@ -161,10 +162,16 @@ f2Rconfig2_mod()
 		go version
 		echo "pausing to check if go is installed"
 		read
+		echo
 
 		go get -v github.com/Sean-Der/fail2rest
 		go install -v github.com/Sean-Der/fail2rest
-		sudo wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		sudo cp $CURRENT_DIR/fail2rest/config/config.json /tmp
+		#sudo wget -P /tmp/ https://raw.githubusercontent.com/Sean-Der/fail2rest/master/config.json #should be changed
+		echo -e "\e[1;36m> Which port number do you want to run the Fail2rest service on? Enter to use Default (5050)\e[0m"
+		read -r PORT
+		PORT=${PORT:-5050}
+		$SED -i "s/PORT/$PORT/g" /tmp/fail2rest.json
 		sudo mv /tmp/config.json /etc/fail2rest.json
 
 		sudo ln -s $GOPATH/bin/fail2rest /usr/bin/
