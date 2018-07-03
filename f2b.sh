@@ -48,15 +48,15 @@ f2bconfig_mod()
         $SED -i "s/WANIP/$WAN_IP/g" $F2B_LOC/jail.local
         $SED -i "s/INTIP/$INT_IP/g" $F2B_LOC/jail.local
 		echo
-		echo "Enter number of seconds a host will be banned, default = 600"
+		echo "1. Enter number of seconds a host will be banned, default = 600"
 		read -r BAN_TIME
 		BAN_TIME=${BAN_TIME:-600}
 
-		echo "Enter a max retry value before a host is banned, default = 4"
+		echo "2. Enter a max retry value before a host is banned, default = 4"
 		read -r MAX_RETRY
 		MAX_RETRY=${MAX_RETRY:-4}
 
-		echo "Enter find time value in seconds i.e. A host is banned if it has generated "maxretry" during the last "findtime", default = 3600"
+		echo "3. Enter find time value in seconds i.e. A host is banned if it has generated "maxretry" during the last "findtime", default = 3600"
 		read -r FIND_TIME
 		FIND_TIME=${FIND_TIME:-3600}
 
