@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #F2B Installer
 #author: elmerfdz
-version=v2.2.2-2
+version=v2.2.3-3
 
 #Org Requirements
 f2breqname=('Fail2ban' 'cURL')
@@ -18,6 +18,7 @@ F2B_ACTION_LOC='/etc/fail2ban/action.d'
 F2B_FILTER_LOC='/etc/fail2ban/filter.d'
 WAN_IP=$(curl ipinfo.io/ip)
 INT_IP=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
+SCRIPT_USER=$(whoami)
 
 #Modules
 #Organizr Requirement Module
@@ -46,6 +47,25 @@ f2bconfig_mod()
         cp $CURRENT_DIR/config/jail.local $F2B_LOC
         $SED -i "s/WANIP/$WAN_IP/g" $F2B_LOC/jail.local
         $SED -i "s/INTIP/$INT_IP/g" $F2B_LOC/jail.local
+		echo
+		echo "1. Enter number of seconds a host will be banned, default = 600"
+		read -r BAN_TIME
+		BAN_TIME=${BAN_TIME:-600}
+
+		echo "2. Enter a max retry value before a host is banned, default = 4"
+		read -r MAX_RETRY
+		MAX_RETRY=${MAX_RETRY:-4}
+
+		echo "3. Enter find time value in seconds i.e. A host is banned if it has generated "maxretry" during the last "findtime", default = 3600"
+		read -r FIND_TIME
+		FIND_TIME=${FIND_TIME:-3600}
+
+		$SED -i "s/BAN_TIME/$BAN_TIME/g" $F2B_LOC/jail.local
+        $SED -i "s/MAX_RETRY/$MAX_RETRY/g" $F2B_LOC/jail.local
+		$SED -i "s/FIND_TIME/$FIND_TIME/g" $F2B_LOC/jail.local
+
+		echo
+
         chmod 644 $F2B_LOC/jail.local
         cp $CURRENT_DIR/config/action.d/cloudflare-v4.conf $F2B_ACTION_LOC
         chmod 644 $F2B_ACTION_LOC
@@ -129,6 +149,7 @@ f2bstall_mod()
         JAILS=($(fail2ban-client status | grep "Jail list" | sed -E 's/^[^:]+:[ \t]+//' | sed 's/,//g'))
         for JAIL in ${JAILS[@]}
         do
+			echo
             echo "--------------- JAIL STATUS: $JAIL ---------------"
             echo
             fail2ban-client status $JAIL
@@ -157,14 +178,9 @@ f2Rconfig1_mod()
 		sudo rm -rf ./goinstall.sh
 		echo
 		echo -e "\e[1;36m> Press enter to exit script and reload shell\e[0m"
-		echo -e "\e[1;36m> Tip: Opening a new terminal window usually just works\e[0m"
-		echo "  OR  "
-		echo -e "\e[1;36m> Use this command: source ~/.bashrc \e[0m"
-		echo
-		echo -e "\e[1;36m> Don't forget to run the script again to complete setup\e[0m"
+		echo -e "\e[1;36m> Don't forget to re-launch the script without sudo or as root to complete the install: bash f2b.sh\e[0m"
 		read
-		#source ~/.bashrc
-		exit
+		sudo -u $SCRIPT_USER bash --login
 	}
 
 f2Rconfig2_mod() 
@@ -270,7 +286,6 @@ show_menus()
 	{
         if [ -e "./inst_5_temp" ]; then
 			f2Rconfig2_mod
-            sleep 3s
             clear
 		fi
 
@@ -281,7 +296,7 @@ show_menus()
 		echo "| 2.| F2B CloudFlare Action Setup for Organizr "
 		echo "| 3.| F2B Complete Install [Install + Config + Organizr Jail + CF Action] "
 		echo "| 4.| Show All Jail Status"
-		echo "| 5.| Fail2Web Install [Do not run script as sudo for this option]"		
+		echo "| 5.| Fail2Web Install (F2B frontend) [Do not run script as sudo for this option]"		
 		echo "| u.| Script updater   "                  
 		echo "| x.| Quit 					  "
 		echo
