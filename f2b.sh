@@ -3,7 +3,7 @@
 #author: elmerfdz
 version=v2.2.3-3
 
-#Org Requirements
+#F2B Requirements
 f2breqname=('Fail2ban' 'cURL')
 f2breq=('fail2ban' 'curl')
 
@@ -21,7 +21,7 @@ INT_IP=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
 SCRIPT_USER=$(whoami)
 
 #Modules
-#Organizr Requirement Module
+#Fail2ban Requirement Module
 f2binstall_mod() 
 	{ 
         echo
@@ -39,6 +39,7 @@ f2binstall_mod()
 		echo
     }
 
+#Configuring F2B
 f2bconfig_mod() 
 	{ 
         echo
@@ -74,6 +75,7 @@ f2bconfig_mod()
         echo "- Done"        
     }
 
+#F2B CF action and jails
  f2bconfig_cf_mod() 
 	{ 
         echo
@@ -157,6 +159,7 @@ f2bstall_mod()
         done
 }
 
+#Fail2Rest Install Pre, Install Go and Golang tools
 f2Rconfig1_mod() 
 	{ 
 		if [ `whoami` = root ]; then
@@ -183,6 +186,7 @@ f2Rconfig1_mod()
 		sudo -u $SCRIPT_USER bash --login
 	}
 
+#Fail2rest Install, must be run without sudo or being root.
 f2Rconfig2_mod() 
 	{ 	
 		if [ `whoami` = root ]; then
@@ -225,7 +229,7 @@ f2Rconfig2_mod()
         echo "- Done"
 		echo
 		echo 
-		echo "Create a new nginx server block and add in the following config for your Fail2Web/Fail2Rest setup"
+		echo "Create a new nginx server block for Fail2web (F2B web frontend) and add in the following config."
 		echo "
     			location / {
         			root /var/www/fail2web/web;	#Fail2Web folder location
